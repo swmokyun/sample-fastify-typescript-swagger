@@ -7,7 +7,7 @@ const PORT = 9000
 const server: FastifyInstance = fastify({ logger: true })
 
 server.register(fastifySwagger, {
-  routePrefix: "/",
+  routePrefix: "/docs",
   swagger: {
     info: {
       title: "Test swagger",
