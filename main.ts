@@ -6,6 +6,9 @@ const PORT = 9000
 
 const server: FastifyInstance = fastify({ logger: true })
 
+/**
+ * swagger
+ */
 server.register(fastifySwagger, {
   routePrefix: "/docs",
   swagger: {
@@ -18,6 +21,10 @@ server.register(fastifySwagger, {
   exposeRoute: true,
 })
 
+/**
+ * test_post
+ * https://www.fastify.io/docs/latest/TypeScript/#typebox
+ */
 const User = Type.Object({
   name: Type.String(),
   mail: Type.Optional(Type.String({ format: "email" })),
@@ -25,7 +32,7 @@ const User = Type.Object({
 type UserType = Static<typeof User>
 
 server.post<{ Body: UserType; Reply: UserType }>(
-  "/",
+  "/test_post",
   {
     schema: {
       body: User,
@@ -37,6 +44,35 @@ server.post<{ Body: UserType; Reply: UserType }>(
   (req, rep) => {
     const { body: user } = req
     rep.status(200).send(user)
+  }
+)
+
+/**
+ * test get, querystring
+ */
+const ErrorResponse = Type.Object({
+  msg: Type.String(),
+})
+type ErrorResponse = Static<typeof ErrorResponse>
+
+server.get<{ Querystring: UserType; Reply: UserType | ErrorResponse }>(
+  "/test_get",
+  {
+    schema: {
+      querystring: User,
+      response: {
+        200: User,
+        400: ErrorResponse,
+      },
+    },
+  },
+  (req, rep) => {
+    const { query: user } = req
+    if (user.name.length < 3) {
+      rep.status(400).send({ msg: "name is too short" })
+    } else {
+      rep.status(200).send(user)
+    }
   }
 )
 
