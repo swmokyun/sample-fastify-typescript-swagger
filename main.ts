@@ -53,9 +53,9 @@ server.post<{ Body: UserType; Reply: UserType }>(
 const ErrorResponse = Type.Object({
   msg: Type.String(),
 })
-type ErrorResponse = Static<typeof ErrorResponse>
+type ErrorResponseType = Static<typeof ErrorResponse>
 
-server.get<{ Querystring: UserType; Reply: UserType | ErrorResponse }>(
+server.get<{ Querystring: UserType; Reply: UserType | ErrorResponseType }>(
   "/test_get",
   {
     schema: {
